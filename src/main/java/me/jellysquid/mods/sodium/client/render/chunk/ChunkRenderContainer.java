@@ -1,13 +1,18 @@
 package me.jellysquid.mods.sodium.client.render.chunk;
 
+import me.jellysquid.mods.sodium.client.SodiumHooks;
 import me.jellysquid.mods.sodium.client.render.SodiumWorldRenderer;
 import me.jellysquid.mods.sodium.client.render.chunk.data.ChunkRenderBounds;
 import me.jellysquid.mods.sodium.client.render.chunk.data.ChunkRenderData;
 import me.jellysquid.mods.sodium.client.render.chunk.passes.BlockRenderPass;
 import me.jellysquid.mods.sodium.client.render.texture.SpriteUtil;
+import me.jellysquid.mods.sodium.client.util.math.FrustumExtended;
+import me.jellysquid.mods.sodium.common.util.DirectionUtil;
+import net.minecraft.client.render.Frustum;
 import me.jellysquid.mods.sodium.common.util.collections.TrackedArrayItem;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.ChunkSectionPos;
 
 import java.util.concurrent.CompletableFuture;
@@ -33,6 +38,8 @@ public class ChunkRenderContainer implements TrackedArrayItem {
 
     private boolean tickable;
 
+    private final Box boundingBox;
+
     public ChunkRenderContainer(ChunkRenderBackend backend, SodiumWorldRenderer worldRenderer, int chunkX, int chunkY, int chunkZ, ChunkRenderColumn column, int id) {
         this.backend = backend;
         this.worldRenderer = worldRenderer;
@@ -41,6 +48,10 @@ public class ChunkRenderContainer implements TrackedArrayItem {
         this.chunkY = chunkY;
         this.chunkZ = chunkZ;
 
+        this.boundingBox = new Box(
+                this.getOriginX(), this.getOriginY(), this.getOriginZ(),
+                this.getOriginX() + 16.0, this.getOriginY() + 16.0, this.getOriginZ() + 16.0
+        );
         this.graphicsStates = new ChunkGraphicsStateArray(BlockRenderPass.COUNT);
         this.column = column;
 
@@ -135,6 +146,15 @@ public class ChunkRenderContainer implements TrackedArrayItem {
      */
     public ChunkSectionPos getChunkPos() {
         return ChunkSectionPos.from(this.chunkX, this.chunkY, this.chunkZ);
+    }
+
+    /**
+     * Tests if the given chunk render is outside of the provided frustum.
+     * @param frustum The frustum to test against
+     * @return True if invisible, otherwise false
+     */
+    public boolean isOutsideFrustum(FrustumExtended frustum) {
+        return !((Frustum) (Object) frustum).isVisible(boundingBox);
     }
 
     /**

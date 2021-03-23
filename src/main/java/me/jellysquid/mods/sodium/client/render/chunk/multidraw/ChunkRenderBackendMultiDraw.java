@@ -1,5 +1,7 @@
 package me.jellysquid.mods.sodium.client.render.chunk.multidraw;
 
+import me.jellysquid.mods.sodium.client.SodiumHooks;
+import me.jellysquid.mods.sodium.client.gl.attribute.GlVertexFormat;
 import me.jellysquid.mods.sodium.client.gl.shader.GlShader;
 import me.jellysquid.mods.sodium.client.gl.shader.ShaderConstants;
 import me.jellysquid.mods.sodium.client.gl.shader.ShaderLoader;
@@ -22,7 +24,10 @@ public abstract class ChunkRenderBackendMultiDraw<T extends ChunkGraphicsState> 
 
     @Override
     protected GlShader createVertexShader(ChunkFogMode fogMode) {
-        return ShaderLoader.loadShader(ShaderType.VERTEX, new Identifier("sodium", "chunk_gl20.v.glsl"),
+        Identifier identifier = SodiumHooks.useClipping.getAsBoolean() ?
+                new Identifier("sodium", "chunk_clip_gl30.v.glsl") :
+                new Identifier("sodium", "chunk_gl20.v.glsl");
+        return ShaderLoader.loadShader(ShaderType.VERTEX, identifier,
                 this.createShaderConstants(fogMode));
     }
 
