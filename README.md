@@ -1,6 +1,6 @@
 ![Project icon](https://git-assets.jellysquid.me/hotlink-ok/sodium/icon-rounded-128px.png)
 
-# Sodium (for Fabric)
+# Sodium (for Fabric) with Indium and Immersive portals compatibility
 ![GitHub license](https://img.shields.io/github/license/CaffeineMC/sodium-fabric.svg)
 ![GitHub issues](https://img.shields.io/github/issues/CaffeineMC/sodium-fabric.svg)
 ![GitHub tag](https://img.shields.io/github/tag/CaffeineMC/sodium-fabric.svg)
@@ -70,7 +70,7 @@ information to triage and debug may be closed.
 
 Please note that while the issue tracker is open to feature requests, development is primarily focused on
 improving hardware compatibility, performance, and finishing any unimplemented features necessary for parity with
-the vanilla renderer.
+the vanilla renderer. (Report all issues to quoteall and caffine)
 
 ### Community
 [![Discord chat](https://img.shields.io/badge/chat%20on-discord-7289DA?logo=discord&logoColor=white)](https://jellysquid.me/discord)
@@ -126,3 +126,6 @@ Loom instead of these outputs.
 
 Sodium is licensed under GNU LGPLv3, a free and open-source license. For more information, please see the
 [license file](https://github.com/CaffeineMC/sodium-fabric/blob/1.16.x/dev/LICENSE.txt).
+
+---
+### Iris support waiting on (https://github.com/IrisShaders/Iris/issues/190)
