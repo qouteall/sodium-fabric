@@ -1,5 +1,7 @@
 package me.jellysquid.mods.sodium.client.render.chunk.oneshot;
 
+import me.jellysquid.mods.sodium.client.SodiumHooks;
+import me.jellysquid.mods.sodium.client.gl.attribute.GlVertexFormat;
 import me.jellysquid.mods.sodium.client.gl.shader.GlShader;
 import me.jellysquid.mods.sodium.client.gl.shader.ShaderLoader;
 import me.jellysquid.mods.sodium.client.gl.shader.ShaderType;
@@ -41,7 +43,10 @@ public abstract class ChunkRenderBackendOneshot<T extends ChunkOneshotGraphicsSt
 
     @Override
     protected GlShader createVertexShader(ChunkFogMode fogMode) {
-        return ShaderLoader.loadShader(ShaderType.VERTEX, new Identifier("sodium", "chunk_gl20.v.glsl"), fogMode.getDefines());
+        Identifier identifier = SodiumHooks.useClipping.getAsBoolean() ?
+                new Identifier("sodium", "chunk_clip_gl30.v.glsl") :
+                new Identifier("sodium", "chunk_gl20.v.glsl");
+        return ShaderLoader.loadShader(ShaderType.VERTEX, identifier, fogMode.getDefines());
     }
 
     @Override

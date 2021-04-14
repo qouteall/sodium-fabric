@@ -1,13 +1,20 @@
 package me.jellysquid.mods.sodium.client.render.chunk;
 
+import me.jellysquid.mods.sodium.client.SodiumHooks;
 import me.jellysquid.mods.sodium.client.render.SodiumWorldRenderer;
 import me.jellysquid.mods.sodium.client.render.chunk.data.ChunkRenderBounds;
 import me.jellysquid.mods.sodium.client.render.chunk.data.ChunkRenderData;
 import me.jellysquid.mods.sodium.client.render.chunk.passes.BlockRenderPass;
 import me.jellysquid.mods.sodium.client.render.texture.SpriteUtil;
 import me.jellysquid.mods.sodium.client.util.math.FrustumExtended;
+
+import me.jellysquid.mods.sodium.common.util.DirectionUtil;
+import net.minecraft.client.render.Frustum;
+import me.jellysquid.mods.sodium.common.util.collections.TrackedArrayItem;
+
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.ChunkSectionPos;
 
 import java.lang.reflect.Array;
@@ -33,15 +40,19 @@ public class ChunkRenderContainer<T extends ChunkGraphicsState> {
     private boolean tickable;
     private int id;
 
+
     public ChunkRenderContainer(ChunkRenderBackend<T> backend, SodiumWorldRenderer worldRenderer, int chunkX, int chunkY, int chunkZ, ChunkRenderColumn<T> column) {
+
         this.worldRenderer = worldRenderer;
 
         this.chunkX = chunkX;
         this.chunkY = chunkY;
         this.chunkZ = chunkZ;
 
+
         //noinspection unchecked
         this.graphicsStates = (T[]) Array.newInstance(backend.getGraphicsStateType(), BlockRenderPass.COUNT);
+
         this.column = column;
     }
 
@@ -141,6 +152,7 @@ public class ChunkRenderContainer<T extends ChunkGraphicsState> {
     }
 
     /**
+
      * Tests if the given chunk render is visible within the provided frustum.
      * @param frustum The frustum to test against
      * @return True if visible, otherwise false
@@ -151,6 +163,7 @@ public class ChunkRenderContainer<T extends ChunkGraphicsState> {
         float z = this.getOriginZ();
 
         return !frustum.fastAabbTest(x, y, z, x + 16.0f, y + 16.0f, z + 16.0f);
+
     }
 
     /**

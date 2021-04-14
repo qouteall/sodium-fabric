@@ -52,5 +52,8 @@
     "features.texture_tracking.MixinSprite",
     "features.texture_tracking.MixinSpriteAtlasTexture",
     "features.world_ticking.MixinClientWorld"
-  ]
+  ],
+    "overwrites": {
+    "conformVisibility": true
+  }
 }
