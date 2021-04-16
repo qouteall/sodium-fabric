@@ -14,7 +14,6 @@ graphical issues or crashes while using it. Additionally, the
 and other issues with a number of mods.
 
 ---
-
 ## Installation
 
 ### Manual installation (recommended)
