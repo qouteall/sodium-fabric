@@ -62,7 +62,6 @@ you have an existing setup with it.
 ---
 
 ### Reporting Issues
-
 You can report bugs and crashes by opening an issue on our [issue tracker](https://github.com/CaffeineMC/sodium-fabric/issues).
 Before opening a new issue, use the search tool to make sure that your issue has not already been reported and ensure
 that you have completely filled out the issue template. Issues which are duplicates or do not contain the necessary
