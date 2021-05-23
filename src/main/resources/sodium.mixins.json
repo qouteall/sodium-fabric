@@ -27,6 +27,8 @@
     "features.buffer_builder.intrinsics.MixinSpriteTexturedVertexConsumer",
     "features.buffer_builder.intrinsics.MixinWorldRenderer",
     "features.chunk_rendering.MixinChunkBuilder",
+    "features.chunk_rendering.MixinClientChunkManager",
+    "features.chunk_rendering.MixinClientChunkManager$MixinClientChunkMap",
     "features.chunk_rendering.MixinClientWorld",
     "features.chunk_rendering.MixinWorldRenderer",
     "features.debug.MixinDebugHud",
@@ -52,5 +54,8 @@
     "features.texture_tracking.MixinSprite",
     "features.texture_tracking.MixinSpriteAtlasTexture",
     "features.world_ticking.MixinClientWorld"
-  ]
+  ],
+    "overwrites": {
+    "conformVisibility": true
+  }
 }
