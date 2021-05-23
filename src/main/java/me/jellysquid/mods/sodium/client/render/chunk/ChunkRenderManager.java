@@ -90,20 +90,6 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
 
     private int visibleChunkCount;
 
-    public static class RenderContext {
-        public final ObjectArrayFIFOQueue<ChunkRenderContainer> iterationQueue = new ObjectArrayFIFOQueue<>();
-        @SuppressWarnings("unchecked")
-        public final ChunkRenderList[] chunkRenderLists = new ChunkRenderList[BlockRenderPass.COUNT];
-        public final ObjectList<ChunkRenderContainer> tickableChunks = new ObjectArrayList<>();
-        public final ObjectList<BlockEntity> visibleBlockEntities = new ObjectArrayList<>();
-
-        public RenderContext(){
-            for (int i = 0; i < this.chunkRenderLists.length; i++) {
-                this.chunkRenderLists[i] = new ChunkRenderList();
-            }
-        }
-    }
-
     private boolean useFogCulling;
     private double fogRenderCutoff;
 
@@ -263,7 +249,7 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
         Collection<BlockEntity> blockEntities = render.getData().getBlockEntities();
 
         if (!blockEntities.isEmpty()) {
-            this.renderContext.visibleBlockEntities.addAll(blockEntities);
+            this.visibleBlockEntities.addAll(blockEntities);
         }
     }
 
@@ -281,7 +267,7 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
         this.rebuildQueue.clear();
         this.importantRebuildQueue.clear();
 
-        this.renderContext.visibleBlockEntities.clear();
+        this.visibleBlockEntities.clear();
 
 
         for (ChunkRenderList<T> list : this.chunkRenderLists) {
@@ -290,13 +276,13 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
             list.reset();
         }
 
-        this.renderContext.tickableChunks.clear();
+        this.tickableChunks.clear();
 
         this.visibleChunkCount = 0;
     }
 
     public Collection<BlockEntity> getVisibleBlockEntities() {
-        return this.renderContext.visibleBlockEntities;
+        return this.visibleBlockEntities;
     }
 
     @Override
