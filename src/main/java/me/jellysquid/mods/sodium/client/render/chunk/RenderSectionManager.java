@@ -81,7 +81,7 @@ public class RenderSectionManager implements ChunkStatusListener {
     private final Deque<ChunkBuildResult> uploadQueue = new ConcurrentLinkedDeque<>();
 
     private ChunkRenderList chunkRenderList = new ChunkRenderList();
-    private final ChunkGraphIterationQueue iterationQueue = new ChunkGraphIterationQueue();
+    private ChunkGraphIterationQueue iterationQueue = new ChunkGraphIterationQueue();
 
     private ObjectList<RenderSection> tickableChunks = new ObjectArrayList<>();
     private ObjectList<BlockEntity> visibleBlockEntities = new ObjectArrayList<>();
@@ -105,10 +105,7 @@ public class RenderSectionManager implements ChunkStatusListener {
 
     private int activeFrame = 0;
 
-    private ChunkRenderList chunkRenderListSwap = new ChunkRenderList();
-    private ObjectList<RenderSection> tickableChunksSwap = new ObjectArrayList<>();
-    private ObjectList<BlockEntity> visibleBlockEntitiesSwap = new ObjectArrayList<>();
-    private boolean isGraphDirtySwap;
+    private final RenderingContext shadowMapContext = new RenderingContext();
 
     public RenderSectionManager(SodiumWorldRenderer worldRenderer, ChunkRenderer chunkRenderer, BlockRenderPassManager renderPassManager, ClientWorld world, int renderDistance) {
         this.chunkRenderer = chunkRenderer;
@@ -119,7 +116,7 @@ public class RenderSectionManager implements ChunkStatusListener {
         this.builder.init(world, renderPassManager);
 
         this.isGraphDirty = true;
-        this.isGraphDirtySwap = true;
+        this.shadowMapContext.isGraphDirty = true;
         this.renderDistance = renderDistance;
 
         this.regions = new RenderRegionManager(this.chunkRenderer);
@@ -134,22 +131,37 @@ public class RenderSectionManager implements ChunkStatusListener {
         }
     }
 
-    public void swapState() {
+    public static class RenderingContext {
+        public ChunkRenderList chunkRenderList = new ChunkRenderList();
+        public ObjectList<RenderSection> tickableChunks = new ObjectArrayList<>();
+        public ObjectList<BlockEntity> visibleBlockEntities = new ObjectArrayList<>();
+        public boolean isGraphDirty = true;
+
+        public RenderingContext() {
+
+        }
+    }
+
+    public void swapContextWith(RenderingContext context) {
         ChunkRenderList chunkRenderListTmp = chunkRenderList;
-        chunkRenderList = chunkRenderListSwap;
-        chunkRenderListSwap = chunkRenderListTmp;
+        chunkRenderList = context.chunkRenderList;
+        context.chunkRenderList = chunkRenderListTmp;
 
         ObjectList<RenderSection> tickableChunksTmp = tickableChunks;
-        tickableChunks = tickableChunksSwap;
-        tickableChunksSwap = tickableChunksTmp;
+        tickableChunks = context.tickableChunks;
+        context.tickableChunks = tickableChunksTmp;
 
         ObjectList<BlockEntity> visibleBlockEntitiesTmp = visibleBlockEntities;
-        visibleBlockEntities = visibleBlockEntitiesSwap;
-        visibleBlockEntitiesSwap = visibleBlockEntitiesTmp;
+        visibleBlockEntities = context.visibleBlockEntities;
+        context.visibleBlockEntities = visibleBlockEntitiesTmp;
 
         boolean isGraphDirtyTmp = isGraphDirty;
-        isGraphDirty = isGraphDirtySwap;
-        isGraphDirtySwap = isGraphDirtyTmp;
+        isGraphDirty = context.isGraphDirty;
+        context.isGraphDirty = isGraphDirtyTmp;
+    }
+
+    public void swapState() {
+        swapContextWith(shadowMapContext);
     }
 
     private void updateRegionVisibilities(FrustumExtended frustum) {
@@ -181,7 +193,7 @@ public class RenderSectionManager implements ChunkStatusListener {
             for (int y = this.world.getBottomSectionCoord(); y < this.world.getTopSectionCoord(); y++) {
                 boolean dirtied = this.processStatusChangeForSection(x, y, z, entry.getValue());
                 this.isGraphDirty |= dirtied;
-                this.isGraphDirtySwap |= dirtied;
+                this.shadowMapContext.isGraphDirty |= dirtied;
             }
 
             if (entry.getValue() == RenderChunkStatus.LOAD) {
@@ -193,7 +205,7 @@ public class RenderSectionManager implements ChunkStatusListener {
 
         this.statusProcessingQueue.clear();
         this.isGraphDirty = true;
-        this.isGraphDirtySwap = true;
+        this.shadowMapContext.isGraphDirty = true;
     }
 
     private boolean processStatusChangeForSection(int x, int y, int z, RenderChunkStatus status) {
