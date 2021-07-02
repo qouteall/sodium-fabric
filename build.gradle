@@ -1,6 +1,7 @@
 plugins {
     id 'fabric-loom' version '0.8-SNAPSHOT'
     id 'org.ajoberstar.grgit' version '4.1.0'
+    id 'maven-publish'
 }
 
 sourceCompatibility = "1.8"
@@ -17,6 +18,11 @@ minecraft {
 
 repositories {
     mavenLocal()
+
+    maven {
+        name = 'JitPack'
+        url = 'https://jitpack.io'
+    }
 }
 
 configurations {
@@ -31,7 +37,8 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.coderbot.iris_mc1_17:iris:1.1.0-pre+rev.2a7dde4"
+//    modImplementation "net.coderbot.iris_mc1_17:iris:1.1.0+rev.f6601be"
+    modImplementation 'com.github.qouteall:Iris:1.17-SNAPSHOT'
 
     // Fabric API
     modIncludeImplementation(fabricApi.module("fabric-api-base", project.fabric_version))
@@ -98,4 +105,25 @@ def getVersionMetadata() {
 
     // No tracking information could be found about the build
     return "unknown"
+}
+
+// configure the maven publication
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            // add all the jars that should be included when publishing to maven
+            artifact(remapJar) {
+                builtBy remapJar
+            }
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+        }
+    }
+
+    // Select the repositories you want to publish to
+    // To publish to maven local, no extra repositories are necessary. Just use the task `publishToMavenLocal`.
+    repositories {
+        // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+    }
 }
