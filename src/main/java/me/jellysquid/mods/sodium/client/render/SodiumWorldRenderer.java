@@ -408,4 +408,8 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
     public ChunkRenderer getChunkRenderer() {
         return this.chunkRenderer;
     }
+
+    public void swapRenderingContext(RenderSectionManager.RenderingContext context) {
+        this.renderSectionManager.swapContextWith(context);
+    }
 }
