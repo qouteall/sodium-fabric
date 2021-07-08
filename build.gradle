@@ -1,6 +1,7 @@
 plugins {
     id 'fabric-loom' version '0.8-SNAPSHOT'
     id 'org.ajoberstar.grgit' version '4.1.0'
+    id 'maven-publish'
 }
 
 sourceCompatibility = "1.8"
@@ -93,4 +94,27 @@ def getVersionMetadata() {
 
     // No tracking information could be found about the build
     return "unknown"
+}
+
+// configure the maven publication
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            // add all the jars that should be included when publishing to maven
+            artifact(remapJar) {
+                builtBy remapJar
+            }
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+        }
+    }
+
+    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+    repositories {
+        // Add repositories to publish to here.
+        // Notice: This block does NOT have the same function as the block in the top level.
+        // The repositories here will be used for publishing your artifact, not for
+        // retrieving dependencies.
+    }
 }
